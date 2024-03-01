@@ -1,0 +1,97 @@
+Document Management code challenge
+
+How to start the app
+ - use docker compose
+command:
+docker-compose up --build -d
+
+How to stop the app
+- use docker compose
+command:
+docker-compose stop
+
+The app will start with a h2 in memory db.
+For of security reason h2 console is turned off.
+Please use swagger to find your data ;)
+
+The app URL:
+localhost:8080/
+
+find sql file in src/main/resources/data.sql
+There you can find security setup for the api.
+In general the passwords are encrypted.
+For now they are decrypted for easy use.
+
+Endpoints:
+find information about the endpoint in swagger
+http://localhost:8080/swagger-ui/index.html
+
+Authorisation and authentication to use the api:
+- find the credentials in src/main/resources/data.sql
+Testing users:
+
+Users/Role:
+- daniel/admin
+- anna/author
+
+Passwords:
+test123 for both users
+
+RabbitMQ:
+the app start also a RabbitMQ instance
+Find the RabbitMQ Management here:
+http://localhost:15672/#/
+user default username , password:
+Username: user
+Password: password
+
+-------------------
+Business Logic
+
+We have Authors and Documents
+
+1.Many Authors can be attached to many Documents
+2. Documents have references to documents
+
+Add 1.
+If a document is created, there need to be at least one Author attached.
+If an Author is deleted, the document will stay in the system and will be not deleted.
+If an Author is deleted, he will be detached from all documents, if he is attached to documents.
+The documents will not be deleted (Maybe there are useful information inside?)
+
+Add 2.
+If a document is created, there could be referenced document (Optional)
+If a document is deleted, the Author will stay in the System
+IF a document is deleted, the reference will me detached from other documents
+
+Validation:
+Names, titles can have 2 to 50 characters.
+
+How to speed up the CRUD operations?
+There is a cache implemented.
+For the ManyToMany Relations I user @BatchSize(20)
+Jpa will do Batch operations to fetch the result faster with less queries
+
+Security:
+the most vulnerable field is the body so far.
+I recommend to protect the application against SQL Injection here. (RequestFilter, etc)
+
+
+Authentication / Authorisation
+We have here 2 Roles.
+Admin -> can do everything
+Author -> Can not delete Authors, Documents
+Outlook: May have Authorisation for "own" resources
+
+RabbitMQ
+There is an implementation for a Message Queue.
+This one is used to delete an Author additional
+Only the Admin Role can use this one.
+
+If there are further questions, contact me ;)
+
+
+That's it! Enjoy!
+
+
+

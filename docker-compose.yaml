@@ -1,0 +1,24 @@
+version: "8.3"
+services:
+  document-management-krieger:
+    image: document-management-krieger:v1
+    container_name: document-management-krieger
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080' # service port
+    restart: unless-stopped
+    depends_on:
+          - rabbitmq
+
+  rabbitmq: # rabbitmq service definition
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # Standard AMQP-Protocol port
+      - "15672:15672" # Management-GUI
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    restart: unless-stopped
